@@ -1,7 +1,21 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   wolf.c                                             :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2017/10/02 13:33:55 by mmatime           #+#    #+#             */
+/*   Updated: 2017/10/02 17:02:10 by mmatime          ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #define mapWidth 24
 #define mapHeight 24
 #include "minilibx/mlx.h"
 #include <stdlib.h>
+#include <string.h>
+#include <math.h>
 
 int		worldmap[24][24] =
 {
@@ -31,6 +45,33 @@ int		worldmap[24][24] =
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
+void	apply_color(int red, int blue, int green, char *str)
+{
+	if (!strcmp(str, "black"))
+	{
+		red = 255;
+		green = 255;
+		blue = 255;
+	}
+	else
+		exit(1);
+}
+
+void	fill_pixel(int x, char *str)
+{
+	int i;
+	int j;
+	int red;
+	int green;
+	int blue;
+
+	i = 0 + (4 * x);
+	apply_color(red, blue, green, "black");
+	str[i] = blue;
+	str[i + 1] = green;
+	str[i + 2] = red;
+}
+
 int		key_hook(int keycode)
 {
 	if (keycode == 53)
@@ -47,10 +88,13 @@ int		main(int argc, char **argv)
 	int screenW = 384;
 	void *mlx = mlx_init();
 	void *win = mlx_new_window(mlx, 512, screenW, "wolf");
+	int bpp, size_line, endien = 0;
+	void *img = mlx_new_image(mlx, 512, 384);
+	char *data = mlx_get_data_addr(img, &bpp, &size_line, &endien);
 
 	double time = 0, oldTime = 0;
 	int x = 0;
-	while (x < 384)
+	while (x < 512)
 	{
 		double cameraX = 2 * x / (double)screenW - 1;
 		double rayPosX = posX;
@@ -60,6 +104,7 @@ int		main(int argc, char **argv)
 
 		int mapX = (int)rayPosX;
 		int mapY = (int)rayPosY;
+		printf("mapX = %d, mapY = %d\n", mapX, mapY);
 
 		double sideDistX;
 		double sideDistY;
@@ -94,6 +139,39 @@ int		main(int argc, char **argv)
 			stepX = 1;
 			sideDistY = (mapY + 1.0 - rayPosY) * deltaDistY;
 		}
+		while (hit == 0)
+		{
+			if (sideDistX < sideDistY)
+			{
+				sideDistX += deltaDistX;
+				mapX += stepX;
+				side = 0;
+			}
+			else
+			{
+				sideDistY += deltaDistY;
+				mapY += stepY;
+				side = 1;
+			}
+			if (worldmap[mapX][mapY] > 0)
+				hit = 1;
+		}
+		if (side == 0)
+			perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDirX;
+		else
+			perpWallDist = (mapY - rayPosY+ (1 - stepY) / 2) / rayDirY;
+		int lineHeight = (int)(512 / perpWallDist);
+
+		int drawStart = -lineHeight / 2 + 384 / 2;
+		if (drawStart < 0)
+			drawStart = 0;
+		int drawEnd = lineHeight / 2 + 384 / 2;
+		if (drawEnd >= 384)
+			drawStart = 384 - 1;
+		//fill_pixel(x, data);
+		mlx_pixel_put(mlx, win, x, 0, 0xFFFFFF);
+		printf("x = %d\n", x);
+		x++;
 	}
 	mlx_key_hook(win, key_hook, win);
 	mlx_loop(mlx);
