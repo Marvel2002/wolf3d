@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 13:33:55 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/02 17:02:10 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/03 16:56:26 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -168,11 +168,11 @@ int		main(int argc, char **argv)
 		int drawEnd = lineHeight / 2 + 384 / 2;
 		if (drawEnd >= 384)
 			drawStart = 384 - 1;
-		//fill_pixel(x, data);
-		mlx_pixel_put(mlx, win, x, 0, 0xFFFFFF);
+		fill_pixel(x, data);
 		printf("x = %d\n", x);
 		x++;
 	}
+	mlx_put_image_to_window(mlx, win, img, 0, 0);
 	mlx_key_hook(win, key_hook, win);
 	mlx_loop(mlx);
 	return (0);
