@@ -6,16 +6,13 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 13:33:55 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/03 16:56:26 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/05 15:30:59 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define mapWidth 24
 #define mapHeight 24
-#include "minilibx/mlx.h"
-#include <stdlib.h>
-#include <string.h>
-#include <math.h>
+#include "wolf.h"
 
 int		worldmap[24][24] =
 {
@@ -45,31 +42,31 @@ int		worldmap[24][24] =
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
-void	apply_color(int red, int blue, int green, char *str)
+void	apply_color(t_env *a, char *str)
 {
-	if (!strcmp(str, "black"))
+	if (!ft_strcmp(str, "white"))
 	{
-		red = 255;
-		green = 255;
-		blue = 255;
+		a->red = 255;
+		a->green = 255;
+		a->blue = 255;
 	}
 	else
 		exit(1);
 }
 
-void	fill_pixel(int x, char *str)
+void	fill_pixel(t_env *a, int x, int y, char *str)
 {
+
 	int i;
+
 	int j;
-	int red;
-	int green;
-	int blue;
 
 	i = 0 + (4 * x);
-	apply_color(red, blue, green, "black");
-	str[i] = blue;
-	str[i + 1] = green;
-	str[i + 2] = red;
+	j = i + (a->size_line * y);
+	apply_color(a, "white");
+	a->data[i] = a->blue;
+	a->data[i + 1] = a->green;
+	a->data[i + 2] = a->red;
 }
 
 int		key_hook(int keycode)
@@ -79,24 +76,37 @@ int		key_hook(int keycode)
 	return (0);
 }
 
+void	draw_line(t_env *a, int x, int start, int end)
+{
+	int i;
+
+	i = -1;
+
+	while (++i < WIDTH)
+		fill_pixel(a, x, i, "black");
+}
+
 int		main(int argc, char **argv)
 {
 	double posX = 22, posY = 12;
 	double dirX = -1, dirY = 0;
 	double planeX = 0, planeY = 0.66;
 
-	int screenW = 384;
-	void *mlx = mlx_init();
-	void *win = mlx_new_window(mlx, 512, screenW, "wolf");
-	int bpp, size_line, endien = 0;
-	void *img = mlx_new_image(mlx, 512, 384);
-	char *data = mlx_get_data_addr(img, &bpp, &size_line, &endien);
+	t_env		*a;
 
+	a = malloc(sizeof(t_env));
+	a->mlx = mlx_init();
+	a->win = mlx_new_window(a->mlx, WIDTH, HEIGHT, "wolf");
+	a->img = mlx_new_image(a->mlx, WIDTH, HEIGHT);
+	a->data = mlx_get_data_addr(a->img, &a->bpp, &a->size_line, &a->endien);
+
+	a->z = 0;
+	printf("bpp = %d, sz = %d, endien = %d\n", a->bpp, a->size_line, a->endien);
 	double time = 0, oldTime = 0;
 	int x = 0;
-	while (x < 512)
+	while (x < WIDTH)
 	{
-		double cameraX = 2 * x / (double)screenW - 1;
+		double cameraX = 2 * x / (double)WIDTH - 1;
 		double rayPosX = posX;
 		double rayPosY = posY;
 		double rayDirX = dirX + planeX * cameraX;
@@ -160,20 +170,20 @@ int		main(int argc, char **argv)
 			perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDirX;
 		else
 			perpWallDist = (mapY - rayPosY+ (1 - stepY) / 2) / rayDirY;
-		int lineHeight = (int)(512 / perpWallDist);
+		int lineHeight = (int)(WIDTH / perpWallDist);
 
-		int drawStart = -lineHeight / 2 + 384 / 2;
+		int drawStart = -lineHeight / 2 + HEIGHT / 2;
 		if (drawStart < 0)
 			drawStart = 0;
-		int drawEnd = lineHeight / 2 + 384 / 2;
-		if (drawEnd >= 384)
-			drawStart = 384 - 1;
-		fill_pixel(x, data);
+		int drawEnd = lineHeight / 2 + HEIGHT / 2;
+		if (drawEnd >= HEIGHT)
+			drawEnd = HEIGHT - 1;
 		printf("x = %d\n", x);
+		draw_line(a, x, drawStart, drawEnd);
 		x++;
 	}
-	mlx_put_image_to_window(mlx, win, img, 0, 0);
-	mlx_key_hook(win, key_hook, win);
-	mlx_loop(mlx);
+	mlx_put_image_to_window(a->mlx, a->win, a->img, 0, 0);
+	mlx_key_hook(a->win, key_hook, a->win);
+	mlx_loop(a->mlx);
 	return (0);
 }
