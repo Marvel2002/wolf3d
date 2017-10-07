@@ -18,13 +18,13 @@ int		worldmap[24][24] =
 {
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1},
+	{1,0,0,0,0,0,0,0,0,1,1,1,1,0,0,0,0,0,0,0,0,0,0,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
@@ -32,26 +32,56 @@ int		worldmap[24][24] =
 
 void	apply_color(t_env *a, char *str)
 {
-	if (!ft_strcmp(str, "white"))
+	if (!ft_strcmp(str, "green"))
+	{
+		a->red = 76;
+		a->green = 153;
+		a->blue = 0;
+	}
+	if (!ft_strcmp(str, "grey"))
+	{
+		a->red = 0;
+		a->green = 153;
+		a->blue = 153;
+	}
+	if (!ft_strcmp(str, "yellow"))
 	{
 		a->red = 255;
 		a->green = 255;
+		a->blue = 0;
+	}
+	if (!ft_strcmp(str, "blue"))
+	{
+		a->red = 0;
+		a->green = 0;
 		a->blue = 255;
 	}
-	else
-		exit(1);
+	//else
+	//	exit(1);
 }
 
-void	fill_pixel(t_env *a, int x, int y, char *str)
+
+
+
+void	fill_pixel(t_env *a, int x, int y)
 {
 
 	int i;
-
 	int j;
 
 	i = 0 + (4 * x);
 	j = i + (a->size_line * y);
-	apply_color(a, "white");
+
+	if (a->ray.hit_side == 1)
+	{
+		if ((a->ray.step_x == -1 && a->ray.step_y == -1) || (a->ray.step_x == 1 && a->ray.step_y == -1))
+			apply_color(a, "yellow");
+		if ((a->ray.step_x == -1 && a->ray.step_y == 1) || (a->ray.step_x == 1 && a->ray.step_y == 1))
+			apply_color(a, "green");
+	}
+	if ((a->ray.step_x == -1 && a->ray.step_y == -1) || (a->ray.step_x == -1 && a->ray.step_y == 1))
+		apply_color(a, "grey");
+	//apply_color(a, "blue");
 	a->data[j] = a->blue;
 	a->data[j + 1] = a->green;
 	a->data[j + 2] = a->red;
@@ -70,7 +100,7 @@ void	draw_line(t_env *a, int x, int start, int end)
 
 	i = -1;
 	while (++i <= end + a->player.z && i < a->height)
-		fill_pixel(a, x, i, "white");
+		fill_pixel(a, x, i);
 }
 
 
@@ -88,7 +118,6 @@ void	ray_drawline(t_env *a, int x)
 	end = height / 2 + a->height / 2;
 	if (end >= a->height)
 		end = a->height - 1;
-	printf("start = %d, end = %d\n", start, end);
 	draw_line(a, x, start, end);
 }
 
@@ -134,7 +163,7 @@ void	calc_ray_distance(t_env *a)
 		}
 		if (worldmap[a->ray.map_x][a->ray.map_y] > 0)
 		{
-			
+
 			a->ray.hit = 1;
 			if (a->ray.hit_side == 0)
 				a->ray.dist = (a->ray.map_x - a->ray.pos_x + (1 - a->ray.step_x) / 2) / a->ray.dir_x;
@@ -143,7 +172,7 @@ void	calc_ray_distance(t_env *a)
 		}
 	}
 }
-	
+
 void	init_ray(t_env *a, int x)
 {	
 	a->ray.map_x = (int)a->player.pos_x;
