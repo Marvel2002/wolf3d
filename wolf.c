@@ -27,18 +27,6 @@ int		worldmap[24][24] =
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1},
 	{1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1},
 };
 
@@ -64,9 +52,9 @@ void	fill_pixel(t_env *a, int x, int y, char *str)
 	i = 0 + (4 * x);
 	j = i + (a->size_line * y);
 	apply_color(a, "white");
-	a->data[i] = a->blue;
-	a->data[i + 1] = a->green;
-	a->data[i + 2] = a->red;
+	a->data[j] = a->blue;
+	a->data[j + 1] = a->green;
+	a->data[j + 2] = a->red;
 }
 
 int		key_hook(int keycode)
@@ -81,16 +69,124 @@ void	draw_line(t_env *a, int x, int start, int end)
 	int i;
 
 	i = -1;
+	while (++i <= end + a->player.z && i < a->height)
+		fill_pixel(a, x, i, "white");
+}
 
-	while (++i < WIDTH)
-		fill_pixel(a, x, i, "black");
+
+
+void	ray_drawline(t_env *a, int x)
+{
+	int height;
+	int start;
+	int end;
+
+	height = (int)(a->height / a->ray.dist);
+	start = -height / 2 + a->height / 2;
+	if (start < 0)
+		start = 0;
+	end = height / 2 + a->height / 2;
+	if (end >= a->height)
+		end = a->height - 1;
+	printf("start = %d, end = %d\n", start, end);
+	draw_line(a, x, start, end);
+}
+
+void	calc_ray_step_side(t_env *a)
+{
+	if (a->ray.dir_x < 0)
+	{
+		a->ray.step_x = -1;
+		a->ray.side_x = (a->ray.pos_x - (int)a->ray.pos_x) * a->ray.delta_x;
+	}
+	else
+	{
+		a->ray.step_x = 1;
+		a->ray.side_x = ((int)a->ray.pos_x + 1 - a->ray.pos_x) * a->ray.delta_x;
+	}
+	if (a->ray.dir_y < 0)
+	{
+		a->ray.step_y = -1;
+		a->ray.side_y = (a->ray.pos_y - (int)a->ray.pos_y) * a->ray.delta_y;
+	}
+	else
+	{
+		a->ray.step_y = 1;
+		a->ray.side_y = ((int)a->ray.pos_y + 1 - a->ray.pos_y) * a->ray.delta_y;
+	}
+}
+
+void	calc_ray_distance(t_env *a)
+{
+	while (a->ray.hit == 0)
+	{
+		if (a->ray.side_x < a->ray.side_y)
+		{
+			a->ray.side_x += a->ray.delta_x;
+			a->ray.map_x += a->ray.step_x;
+			a->ray.hit_side = 0;
+		}
+		else
+		{
+			a->ray.side_y += a->ray.delta_y;
+			a->ray.map_y += a->ray.step_y;
+			a->ray.hit_side = 1;
+		}
+		if (worldmap[a->ray.map_x][a->ray.map_y] > 0)
+		{
+			
+			a->ray.hit = 1;
+			if (a->ray.hit_side == 0)
+				a->ray.dist = (a->ray.map_x - a->ray.pos_x + (1 - a->ray.step_x) / 2) / a->ray.dir_x;
+			else
+				a->ray.dist = (a->ray.map_y - a->ray.pos_y + (1 - a->ray.step_y) / 2) / a->ray.dir_y;
+		}
+	}
+}
+	
+void	init_ray(t_env *a, int x)
+{	
+	a->ray.map_x = (int)a->player.pos_x;
+	a->ray.map_y = (int)a->player.pos_y;
+	a->ray.cam = 2 * x / (double)a->width - 1;
+	a->ray.dir_x = a->player.dir_x + a->player.plane_x * a->ray.cam;
+	a->ray.dir_y = a->player.dir_y + a->player.plane_y * a->ray.cam;
+	a->ray.delta_x = sqrt(1 + (a->ray.dir_y * a->ray.dir_y) / (a->ray.dir_x * a->ray.dir_x));
+	a->ray.delta_y = sqrt(1 + (a->ray.dir_x * a->ray.dir_x) / (a->ray.dir_y * a->ray.dir_y));
+	a->ray.hit = 0;
+	a->ray.dist = -1;
+	a->ray.hit_side = -1;
+}
+
+void	init_player(t_env *a)
+{
+	a->player.pos_x = 10;
+	a->player.pos_y = 10;
+	a->player.dir_x = -1;
+	a->player.dir_y = 0;
+	a->player.z = 0;
+	a->player.plane_x = 0;
+	a->player.plane_y = 0.66;
+}
+
+void	raycasting(t_env *a)
+{
+	int	x; 
+
+	x = -1;
+	a->ray.pos_x = a->player.pos_x;
+	a->ray.pos_y = a->player.pos_y;
+	while (++x < a->width)
+	{
+		init_ray(a, x);
+		calc_ray_step_side(a);
+		calc_ray_distance(a);
+		ray_drawline(a, x);
+	}
 }
 
 int		main(int argc, char **argv)
 {
-	double posX = 22, posY = 12;
-	double dirX = -1, dirY = 0;
-	double planeX = 0, planeY = 0.66;
 
 	t_env		*a;
 
@@ -99,89 +195,10 @@ int		main(int argc, char **argv)
 	a->win = mlx_new_window(a->mlx, WIDTH, HEIGHT, "wolf");
 	a->img = mlx_new_image(a->mlx, WIDTH, HEIGHT);
 	a->data = mlx_get_data_addr(a->img, &a->bpp, &a->size_line, &a->endien);
-
-	a->z = 0;
-	printf("bpp = %d, sz = %d, endien = %d\n", a->bpp, a->size_line, a->endien);
-	double time = 0, oldTime = 0;
-	int x = 0;
-	while (x < WIDTH)
-	{
-		double cameraX = 2 * x / (double)WIDTH - 1;
-		double rayPosX = posX;
-		double rayPosY = posY;
-		double rayDirX = dirX + planeX * cameraX;
-		double rayDirY = dirY + planeY * cameraX;
-
-		int mapX = (int)rayPosX;
-		int mapY = (int)rayPosY;
-		printf("mapX = %d, mapY = %d\n", mapX, mapY);
-
-		double sideDistX;
-		double sideDistY;
-
-		double deltaDistX = sqrt(1 + (rayDirY * rayDirY) / (rayDirX * rayDirX));
-		double deltaDistY = sqrt(1 + (rayDirX * rayDirX) / (rayDirY * rayDirY));
-		double perpWallDist;
-
-		int stepX;
-		int stepY;
-
-		int hit = 0;
-		int side;
-
-		if (rayDirX < 0)
-		{
-			stepX = -1;
-			sideDistX = (rayPosX - mapX) * deltaDistX;
-		}
-		else
-		{
-			stepX = 1;
-			sideDistX = (mapX + 1.0 - rayPosX) * deltaDistX;
-		}
-		if (rayDirY < 0)
-		{
-			stepX = -1;
-			sideDistY = (rayPosY - mapY) * deltaDistY;
-		}
-		else
-		{
-			stepX = 1;
-			sideDistY = (mapY + 1.0 - rayPosY) * deltaDistY;
-		}
-		while (hit == 0)
-		{
-			if (sideDistX < sideDistY)
-			{
-				sideDistX += deltaDistX;
-				mapX += stepX;
-				side = 0;
-			}
-			else
-			{
-				sideDistY += deltaDistY;
-				mapY += stepY;
-				side = 1;
-			}
-			if (worldmap[mapX][mapY] > 0)
-				hit = 1;
-		}
-		if (side == 0)
-			perpWallDist = (mapX - rayPosX + (1 - stepX) / 2) / rayDirX;
-		else
-			perpWallDist = (mapY - rayPosY+ (1 - stepY) / 2) / rayDirY;
-		int lineHeight = (int)(WIDTH / perpWallDist);
-
-		int drawStart = -lineHeight / 2 + HEIGHT / 2;
-		if (drawStart < 0)
-			drawStart = 0;
-		int drawEnd = lineHeight / 2 + HEIGHT / 2;
-		if (drawEnd >= HEIGHT)
-			drawEnd = HEIGHT - 1;
-		printf("x = %d\n", x);
-		draw_line(a, x, drawStart, drawEnd);
-		x++;
-	}
+	a->width = WIDTH;
+	a->height = HEIGHT;
+	init_player(a);
+	raycasting(a);
 	mlx_put_image_to_window(a->mlx, a->win, a->img, 0, 0);
 	mlx_key_hook(a->win, key_hook, a->win);
 	mlx_loop(a->mlx);
