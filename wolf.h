@@ -17,9 +17,10 @@
 # include <string.h>
 # include <math.h>
 # include <stdio.h>
+# include <fcntl.h>
 
-# define WIDTH 512
-# define HEIGHT 384
+# define WIDTH 800
+# define HEIGHT 600
 
 typedef struct	s_player
 {
@@ -29,7 +30,8 @@ typedef struct	s_player
 	double		dir_y;
 	double		plane_x;
 	double		plane_y;
-	int			z;
+	double		speed_move;
+	double		speed_turn;
 }				t_player;
 
 typedef struct	s_ray
@@ -63,10 +65,13 @@ typedef struct	s_env
 	int			**map;
 	int			height;
 	int			width;
+	int			map_height;
+	int			map_width;
 	int			bpp;
 	int 		size_line;
 	int			endien;
-	int			blue;
-	int			red;
-	int 		green;
+	double		blue;
+	double		red;
+	double 		green;
+	double		i;
 }				t_env;
