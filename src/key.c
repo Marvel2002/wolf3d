@@ -1,38 +1,43 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   init.c                                             :+:      :+:    :+:   */
+/*   key.c                                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2017/10/09 17:44:19 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 19:48:38 by mmatime          ###   ########.fr       */
+/*   Created: 2017/10/09 19:23:56 by mmatime           #+#    #+#             */
+/*   Updated: 2017/10/09 19:46:11 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/wolf.h"
 
-void	init_player(t_env *a)
+int		key_hook(int keycode, t_env *a)
 {
-	a->player.pos_x = 0;
-	a->player.pos_y = 0;
-	a->player.dir_x = -1;
-	a->player.dir_y = 0;
-	a->player.plane_x = 0;
-	a->player.plane_y = 0.66;
-	a->player.speed_move = 0.05;
-	a->player.speed_turn = 0.05;
+	if (keycode == 53)
+		exit(1);
+	if (keycode == 126)
+		move_up(a);
+	if (keycode == 125)
+		move_down(a);
+	if (keycode == 123)
+		move_left(a);
+	if (keycode == 124)
+		move_right(a);
+	raycasting(a);
+	mlx_put_image_to_window(a->mlx, a->win, a->img, 0, 0);
+	return (0);
 }
 
-t_env	*init_env(void)
+int		close_hook(t_env *a)
 {
-	t_env *a;
+	free(a);
+	exit(1);
+	return (0);
+}
 
-	a = (t_env *)malloc(sizeof(t_env));
-	if (!a)
-		malloc_error();
-	a->width = WIDTH;
-	a->height = HEIGHT;
-	init_player(a);
-	return (a);
+int		expose_hook(t_env *a)
+{
+	raycasting(a);
+	return (0);
 }

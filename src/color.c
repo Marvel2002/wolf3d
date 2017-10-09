@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 17:43:17 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:52:39 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/09 19:43:17 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ int		smog_sky(t_env *a, double d)
 {
 	double c;
 
-	c = d / (-a->height / 2);
+	c = d / (a->height / 2);
 	return (a->i * c);
 }
 

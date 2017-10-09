@@ -6,12 +6,12 @@
 #    By: mmatime <marvin@42.fr>                     +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2017/10/09 18:28:12 by mmatime           #+#    #+#              #
-#    Updated: 2017/10/09 18:37:03 by mmatime          ###   ########.fr        #
+#    Updated: 2017/10/09 19:25:57 by mmatime          ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = wolf3d
-SRC = ./src/main.c ./src/draw.c ./src/init.c ./src/parsing.c ./src/color.c ./src/error.c ./src/move.c ./src/raycast.c
+SRC = ./src/main.c ./src/draw.c ./src/init.c ./src/parsing.c ./src/color.c ./src/error.c ./src/move.c ./src/raycast.c ./src/key.c
 LIB_PATH = ./libft
 MLX_PATH = ./minilibx
 SRC_PATH = ./src/

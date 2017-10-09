@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/05 14:05:03 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:41:49 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/09 19:44:53 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -101,6 +101,8 @@ void			move_down(t_env *a);
 void			move_left(t_env *a);
 void			move_right(t_env *a);
 int				key_hook(int keycode, t_env *a);
+int				close_hook(t_env *a);
+int				expose_hook(t_env *a);
 void			parse_position(int fd, t_env *a);
 void			parse_line(char *line, int y, int **map, t_env *a);
 int				parse_file(int fd, t_env *a);

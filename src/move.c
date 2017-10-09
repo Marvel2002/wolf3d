@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 17:44:37 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:42:55 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/09 19:56:03 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,21 +62,4 @@ void	move_right(t_env *a)
 		a->player.plane_y * sin(-a->player.speed_turn);
 	a->player.plane_y = old * sin(-a->player.speed_turn) +
 		a->player.plane_y * cos(-a->player.speed_turn);
-}
-
-int		key_hook(int keycode, t_env *a)
-{
-	if (keycode == 53)
-		exit(1);
-	if (keycode == 126)
-		move_up(a);
-	if (keycode == 125)
-		move_down(a);
-	if (keycode == 123)
-		move_left(a);
-	if (keycode == 124)
-		move_right(a);
-	raycasting(a);
-	mlx_put_image_to_window(a->mlx, a->win, a->img, 0, 0);
-	return (0);
 }
