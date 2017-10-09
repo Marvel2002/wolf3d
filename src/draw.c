@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 17:43:52 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:46:05 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/09 19:07:28 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,7 +58,7 @@ void	fill_pixel_ground(t_env *a, int x, int y)
 void	draw_line(t_env *a, int x, int start, int end)
 {
 	a->i = 0;
-	while (a->i <= a->height / 2)
+	while (a->i < a->height / 2)
 	{
 		fill_pixel_sky(a, x, a->i);
 		a->i++;

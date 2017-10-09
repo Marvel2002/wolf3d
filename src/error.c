@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 17:44:09 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:44:56 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/09 19:00:21 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,7 +34,7 @@ void	map_error(t_env *a)
 
 void	player_error(t_env *a)
 {
-	ft_putstr("Error : player position cannot be on a wall (1)");
+	ft_putstr("Error : player position cannot be on a wall (1) ");
 	ft_putendl("or outside the map");
 	free(a);
 	exit(1);
