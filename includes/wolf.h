@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/05 14:05:03 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 21:01:51 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/10 16:18:36 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -107,6 +107,7 @@ void			parse_position(int fd, t_env *a);
 void			parse_line(char *line, int y, int **map, t_env *a);
 int				parse_file(int fd, t_env *a);
 int				file_open(t_env *a, char *argv);
+void			ft_free_tab(int i, char **tab);
 void			wolf_init(t_env *a, int argc, char **argv);
 int				set_color_sides(t_env *a);
 void			calc_ray_step_side(t_env *a);

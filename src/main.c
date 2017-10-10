@@ -6,11 +6,24 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 13:33:55 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 19:45:46 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/10 16:18:39 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../includes/wolf.h"
+
+void	ft_free_tab(int i, char **tab)
+{
+	int a;
+
+	a = 0;
+	while (a < i)
+	{
+		free(tab[a]);
+		a++;
+	}
+	tab = NULL;
+}
 
 void	ft_command(char **argv)
 {

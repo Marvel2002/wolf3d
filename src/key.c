@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 19:23:56 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 21:01:35 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/10 15:53:04 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,10 @@
 int		key_hook(int keycode, t_env *a)
 {
 	if (keycode == 53)
+	{
+		free(a);
 		exit(1);
+	}
 	if (keycode == 126)
 		move_up(a);
 	if (keycode == 125)
@@ -32,7 +35,7 @@ int		key_hook(int keycode, t_env *a)
 int		close_hook(t_env *a)
 {
 	free(a);
-	exit(1);
+	exit(0);
 	return (0);
 }
 

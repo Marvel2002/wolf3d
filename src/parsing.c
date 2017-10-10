@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/09 17:44:50 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/09 18:43:02 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/10 16:19:37 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	parse_position(int fd, t_env *a)
 	if (get_next_line(fd, &line) < 1)
 		put_error(a);
 	line_split = ft_strsplit(line, ' ');
+	free(line);
 	while (line_split[i])
 		i++;
 	if (i != 4)
@@ -30,10 +31,12 @@ void	parse_position(int fd, t_env *a)
 	a->map_height = ft_atoi(line_split[1]);
 	a->player.pos_y = ft_atoi(line_split[2]) + 0.5;
 	a->player.pos_x = ft_atoi(line_split[3]) + 0.5;
+	ft_free_tab(i, line_split);
 	if (a->map_width < 0 || a->map_height < 0 || a->player.pos_x < 0 ||
 			a->player.pos_y < 0 || a->player.pos_x >= a->map_height ||
 			a->player.pos_y >= a->map_width)
 		map_error(a);
+	free(line_split);
 }
 
 void	parse_line(char *line, int y, int **map, t_env *a)
@@ -52,11 +55,13 @@ void	parse_line(char *line, int y, int **map, t_env *a)
 					ft_atoi(line_split[x]) >= 0 && x < a->map_width))
 			map_error(a);
 		map[y][x] = ft_atoi(line_split[x]);
+		free(line_split[x]);
 		if ((x == 0 || x == a->map_width - 1 || y == 0 ||
 					y == a->map_height - 1) && map[y][x] == 0)
 			map_error(a);
 		x++;
 	}
+	free(line_split);
 	if (x != a->map_width)
 		map_error(a);
 }
@@ -73,6 +78,7 @@ int		parse_file(int fd, t_env *a)
 	while (get_next_line(fd, &line) == 1)
 	{
 		parse_line(line, y, map, a);
+		free(line);
 		y++;
 	}
 	if (map[(int)a->player.pos_x][(int)a->player.pos_y] != 0)
