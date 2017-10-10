@@ -6,7 +6,7 @@
 /*   By: mmatime <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2017/10/02 13:33:55 by mmatime           #+#    #+#             */
-/*   Updated: 2017/10/10 16:18:39 by mmatime          ###   ########.fr       */
+/*   Updated: 2017/10/10 16:31:01 by mmatime          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ void	ft_free_tab(int i, char **tab)
 
 void	ft_command(char **argv)
 {
-	ft_putstr("Wolf3d is ON with ");
+	ft_putstr("\n       Wolf3d is ON with ");
 	ft_putendl(argv[1]);
-	ft_putendl("Commands : ");
-	ft_putendl("Move : Up, down, left, right");
-	ft_putendl("Exit : ESC or close the window");
+	ft_putendl("\n      |              Commands :                  |");
+	ft_putendl("      |      Move : Up, down, left, right        |");
+	ft_putendl("      |      Exit : ESC or close the window      |\n\n");
 }
 
 int		main(int argc, char **argv)
